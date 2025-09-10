@@ -1,0 +1,34 @@
+# Бинарники и объектные файлы
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Скомпилированные бинарники Go
+/bin/
+/build/
+/dist/
+/cmd/**/main
+
+# Кэш Go
+*.log
+*.cache
+*.tmp
+
+# Папка с зависимостями (если вдруг используется)
+vendor/
+
+# Модульные артефакты
+*.prof
+
+# IDE/редактор (VS Code, GoLand и т.д.)
+.vscode/
+.idea/
+*.iml
+
+# OS специфичное
+.DS_Store
+Thumbs.db
