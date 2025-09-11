@@ -13,7 +13,8 @@ type User struct {
 	Password string `gorm:"not null"`
 }
 
-func (u *User) SetPassword(password string) {
+func (u *User) SetData(username string, password string) {
+	u.Username = username
 	hash := sha256.Sum256([]byte(password))
 	u.Password = hex.EncodeToString(hash[:])
 }
