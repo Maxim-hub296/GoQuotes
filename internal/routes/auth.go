@@ -21,4 +21,8 @@ func AuthRoutes(r *mux.Router, db *gorm.DB, store *sessions.CookieStore) {
 	r.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
 		handlers.LogoutHandler(store, w, r)
 	})
+
+	r.HandleFunc("/delete_user", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteUserHandler(db, store, w, r)
+	})
 }

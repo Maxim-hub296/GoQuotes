@@ -16,6 +16,11 @@
     <div class="mx-auto p-4 rounded shadow-sm" style="max-width: 500px; background-color: #ffffff;">
         <h2 class="text-center mb-4">Регистрация</h2>
 
+        {{ if .Error }}
+        <div class="alert alert-danger">{{ .Error}}</div>
+        {{ end }}
+
+
         <form method="POST" action="/auth/register">
             <!-- Имя -->
             <div class="mb-3">

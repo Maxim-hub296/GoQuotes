@@ -3,6 +3,7 @@ package handlers
 import (
 	"GoQuotes/internal/models"
 	"GoQuotes/internal/templates"
+	"GoQuotes/internal/utils"
 	"fmt"
 	"net/http"
 
@@ -29,7 +30,9 @@ func RegisterHandler(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 
 		result := db.Create(&user)
 		if result.Error != nil {
-			http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+			templates.Tmpl.ExecuteTemplate(w, "register", map[string]string{
+				"Error": "Имя пользователя уже занято",
+			})
 			return
 		}
 		fmt.Println("Регистрация пользователя " + username + " прошла успешно")
@@ -82,5 +85,30 @@ func LogoutHandler(store *sessions.CookieStore, w http.ResponseWriter, r *http.R
 	session, _ := store.Get(r, "session")
 	session.Options.MaxAge = -1
 	session.Save(r, w)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func DeleteUserHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+
+	idv := session.Values["user_id"]
+	uid, _ := utils.ToUintID(w, r, idv)
+
+	var user models.User
+	if err := db.First(&user, uid).Error; err != nil {
+		fmt.Println("Пользователь не найден:", err)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	if err := user.Delete(db); err != nil {
+		fmt.Println("Ошибка при удалении:", err)
+	} else {
+		fmt.Println("Пользователь удалён")
+	}
+
+	session.Options.MaxAge = -1
+	session.Save(r, w)
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

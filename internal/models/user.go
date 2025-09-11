@@ -23,3 +23,7 @@ func (u *User) CheckPassword(password string) bool {
 	hash := sha256.Sum256([]byte(password))
 	return u.Password == hex.EncodeToString(hash[:])
 }
+
+func (u *User) Delete(db *gorm.DB) error {
+	return db.Unscoped().Delete(&u).Error
+}
