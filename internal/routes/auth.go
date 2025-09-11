@@ -11,7 +11,7 @@ import (
 
 func AuthRoutes(r *mux.Router, db *gorm.DB, store *sessions.CookieStore) {
 	r.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		handlers.RegisterHandler(db, w, r)
+		handlers.RegisterHandler(db, store, w, r)
 	})
 
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {

@@ -15,7 +15,7 @@ func ProfileHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWri
 
 	idv := session.Values["user_id"]
 
-	uid, ok := utils.ToUintID(w, r, idv)
+	uid, ok := utils.ToUintID(idv)
 
 	if !ok {
 		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)

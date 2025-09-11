@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func RegisterHandler(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+func RegisterHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		err := templates.Tmpl.ExecuteTemplate(w, "register", nil)
 		if err != nil {
@@ -36,6 +36,7 @@ func RegisterHandler(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		fmt.Println("Регистрация пользователя " + username + " прошла успешно")
+		utils.Login(w, r, result, user, store, username, password)
 	}
 }
 
@@ -54,29 +55,8 @@ func LoginHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWrite
 		var user models.User
 
 		result := db.Where("username = ?", username).First(&user)
-		if result.Error != nil {
-			templates.Tmpl.ExecuteTemplate(w, "login", map[string]string{
-				"Error": "Неверное имя пользователя",
-			})
-			return
 
-		}
-
-		if user.CheckPassword(password) {
-			session, _ := store.Get(r, "session")
-			session.Values["user_id"] = int(user.ID)
-			if err := session.Save(r, w); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-		} else {
-			templates.Tmpl.ExecuteTemplate(w, "login", map[string]string{
-				"Error": "Неверный пароль",
-			})
-			return
-		}
-		fmt.Println("Пользователь " + username + " успешно зашел!")
-		http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		utils.Login(w, r, result, user, store, username, password)
 
 	}
 }
@@ -92,7 +72,7 @@ func DeleteUserHandler(db *gorm.DB, store *sessions.CookieStore, w http.Response
 	session, _ := store.Get(r, "session")
 
 	idv := session.Values["user_id"]
-	uid, _ := utils.ToUintID(w, r, idv)
+	uid, _ := utils.ToUintID(idv)
 
 	var user models.User
 	if err := db.First(&user, uid).Error; err != nil {
