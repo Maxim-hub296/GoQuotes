@@ -17,4 +17,8 @@ func AuthRoutes(r *mux.Router, db *gorm.DB, store *sessions.CookieStore) {
 	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		handlers.LoginHandler(db, store, w, r)
 	})
+
+	r.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+		handlers.LogoutHandler(store, w, r)
+	})
 }

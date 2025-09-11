@@ -24,6 +24,7 @@ func main() {
 	mainRouter := mux.NewRouter()
 
 	routes.IndexRoutes(mainRouter)
+	routes.ProfileRoutes(mainRouter, db, store)
 
 	authSubRouter := mainRouter.PathPrefix("/auth").Subrouter()
 	routes.AuthRoutes(authSubRouter, db, store)

@@ -73,6 +73,14 @@ func LoginHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWrite
 			return
 		}
 		fmt.Println("Пользователь " + username + " успешно зашел!")
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
 
 	}
+}
+
+func LogoutHandler(store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session")
+	session.Options.MaxAge = -1
+	session.Save(r, w)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
