@@ -1,38 +1,44 @@
 {{ define "quote_form" }}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Добавить цитату — GoQuotes</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body style="background-color: #f8f4e3; color: #333333; font-family: Arial, sans-serif;">
-<div class="container mt-5">
-    <h2 class="mb-4 text-center">Добавить цитату</h2>
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Добавить цитату — GoQuotes</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body style="background-color: #f8f4e3; color: #333333; font-family: Arial, sans-serif;">
 
-    {{ if .Success }}
-    <div class="alert alert-success">{{ .Success}}</div>
-    {{ end }}
+    <!-- Header -->
+    {{ template "header" . }}
 
-    <form method="POST" action="/quotes/create" class="card p-4 shadow-sm" style="border-radius: 12px;">
-        <!-- Поле автора -->
-        <div class="mb-3">
-            <label for="author" class="form-label">Автор</label>
-            <input type="text" class="form-control" id="author" name="author" placeholder="Имя автора" required>
-        </div>
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">Добавить цитату</h2>
 
-        <!-- Поле текста цитаты -->
-        <div class="mb-3">
-            <label for="text" class="form-label">Текст цитаты</label>
-            <textarea class="form-control" id="text" name="text" rows="4" placeholder="Введите саму цитату..." required></textarea>
-        </div>
+        {{ if .Success }}
+            <div class="alert alert-success">{{ .Success }}</div>
+        {{ end }}
 
-        <!-- Кнопка отправки -->
-        <button type="submit" class="btn btn-success w-100" style="background-color: #28a745; border: none;">
-            Сохранить цитату
-        </button>
-    </form>
-</div>
-</body>
-</html>
+        <form method="POST" action="/quotes/create" class="card p-4 shadow-sm" style="border-radius: 12px;">
+            <div class="mb-3">
+                <label for="author" class="form-label">Автор</label>
+                <input type="text" class="form-control" id="author" name="author" placeholder="Имя автора" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="text" class="form-label">Текст цитаты</label>
+                <textarea class="form-control" id="text" name="text" rows="4" placeholder="Введите саму цитату..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100" style="background-color: #28a745; border: none;">
+                Сохранить цитату
+            </button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    {{ template "footer" . }}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
 {{ end }}

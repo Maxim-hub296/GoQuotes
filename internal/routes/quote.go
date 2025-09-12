@@ -11,6 +11,9 @@ import (
 
 func QuoteRoutes(r *mux.Router, db *gorm.DB, store *sessions.CookieStore) {
 	r.HandleFunc("/create", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateQuote(db, store, w, r)
+		handlers.CreateQuoteHandler(db, store, w, r)
+	})
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UserQuotesHandler(db, store, w, r)
 	})
 }

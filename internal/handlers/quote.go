@@ -11,7 +11,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateQuote(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
+type Quotes struct {
+	Quotes []models.Quote
+}
+
+func CreateQuoteHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
 
 	uid, ok := utils.IsLoggedIn(store, r)
 
@@ -48,4 +52,20 @@ func CreateQuote(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter
 		fmt.Println("Цитата успешно сохранена!")
 
 	}
+}
+
+func UserQuotesHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
+	uid, ok := utils.IsLoggedIn(store, r)
+	if !ok {
+		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+		return
+	}
+
+	var quotes []models.Quote
+	db.Where("user_id = ?", uid).Find(&quotes)
+
+	templates.Tmpl.ExecuteTemplate(w, "quotes", Quotes{
+		Quotes: quotes,
+	})
+
 }
