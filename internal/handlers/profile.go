@@ -11,11 +11,8 @@ import (
 )
 
 func ProfileHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "session")
 
-	idv := session.Values["user_id"]
-
-	uid, ok := utils.ToUintID(idv)
+	uid, ok := utils.IsLoggedIn(store, r)
 
 	if !ok {
 		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)

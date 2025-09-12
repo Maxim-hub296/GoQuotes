@@ -61,3 +61,16 @@ func Login(w http.ResponseWriter, r *http.Request, res *gorm.DB, user models.Use
 	fmt.Println("Пользователь " + username + " успешно зашел!")
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
+
+func IsLoggedIn(store *sessions.CookieStore, r *http.Request) (uint, bool) {
+	session, _ := store.Get(r, "session")
+	uid, ok := ToUintID(session.Values["user_id"])
+
+	if !ok {
+
+		return 0, false
+	} else {
+		return uid, true
+	}
+
+}

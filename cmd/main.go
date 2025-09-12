@@ -29,6 +29,9 @@ func main() {
 	authSubRouter := mainRouter.PathPrefix("/auth").Subrouter()
 	routes.AuthRoutes(authSubRouter, db, store)
 
+	quoteSubRouter := mainRouter.PathPrefix("/quotes").Subrouter()
+	routes.QuoteRoutes(quoteSubRouter, db, store)
+
 	fmt.Println("Сервер работает на http://localhost:8181")
 
 	err := http.ListenAndServe(":8181", mainRouter)

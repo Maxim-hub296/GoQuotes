@@ -19,10 +19,11 @@ func InitDB() *gorm.DB {
 	}
 
 	// миграции
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.User{}, &models.Quote{})
 	if err != nil {
 		log.Fatal("не удалось мигрировать:", err)
 	}
+
 	fmt.Println("База готова")
 	return db
 
