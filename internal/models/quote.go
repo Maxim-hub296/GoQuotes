@@ -9,7 +9,7 @@ type Quote struct {
 	Favorite bool   `gorm:"not null"`
 
 	UserID uint
-	User   User
+	User   User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func (q *Quote) Create(author string, text string, userId uint) {
