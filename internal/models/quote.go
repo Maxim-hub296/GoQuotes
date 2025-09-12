@@ -18,3 +18,7 @@ func (q *Quote) Create(author string, text string, userId uint) {
 	q.Favorite = false
 	q.UserID = userId
 }
+
+func (q *Quote) Delete(db *gorm.DB) error {
+	return db.Unscoped().Delete(&q).Error
+}

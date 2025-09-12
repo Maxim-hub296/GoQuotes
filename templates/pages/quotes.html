@@ -21,15 +21,25 @@
         <div class="col">
             <div class="card shadow-sm h-100" style="border-radius: 12px;" data-quote-id="{{ .ID }}">
                 <div class="card-body">
-                    <!-- скрытый ID -->
-                    <input type="hidden" name="quote_id" value="{{ .ID }}">
+                    <!-- Форма для удаления -->
+                    <form method="POST" action="/quotes/delete" class="d-flex flex-column h-100">
+                        <!-- скрытый ID -->
+                        <input type="hidden" name="quote_id" value="{{ .ID }}">
 
-                    <blockquote class="blockquote mb-3">
-                        <p class="mb-0">"{{ .Text }}"</p>
-                    </blockquote>
-                    <footer class="blockquote-footer">
-                        {{ .Author }}
-                    </footer>
+                        <blockquote class="blockquote mb-3 flex-grow-1">
+                            <p class="mb-0">"{{ .Text }}"</p>
+                        </blockquote>
+                        <footer class="blockquote-footer mb-3">
+                            {{ .Author }}
+                        </footer>
+
+                        <!-- Кнопка удаления -->
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Удалить
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

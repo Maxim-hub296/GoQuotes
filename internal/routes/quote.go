@@ -16,4 +16,7 @@ func QuoteRoutes(r *mux.Router, db *gorm.DB, store *sessions.CookieStore) {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handlers.UserQuotesHandler(db, store, w, r)
 	})
+	r.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
+		handlers.QuoteDeleteHandler(db, w, r)
+	})
 }

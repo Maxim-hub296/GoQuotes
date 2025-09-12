@@ -6,6 +6,7 @@ import (
 	"GoQuotes/internal/utils"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/sessions"
 	"gorm.io/gorm"
@@ -67,5 +68,25 @@ func UserQuotesHandler(db *gorm.DB, store *sessions.CookieStore, w http.Response
 	templates.Tmpl.ExecuteTemplate(w, "quotes", Quotes{
 		Quotes: quotes,
 	})
+
+}
+
+func QuoteDeleteHandler(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	quoteId := r.FormValue("quote_id")
+
+	id, err := strconv.Atoi(quoteId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var quote models.Quote
+	db.First(&quote, id)
+	if err := quote.Delete(db); err != nil {
+		fmt.Println("Ошибка при удалении: ", err)
+	} else {
+		fmt.Println("Цитата удалена")
+		http.Redirect(w, r, "/quotes/", http.StatusSeeOther)
+	}
 
 }
