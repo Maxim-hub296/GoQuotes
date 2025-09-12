@@ -5,6 +5,7 @@ import (
 	"GoQuotes/internal/templates"
 	"GoQuotes/internal/utils"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/sessions"
 	"gorm.io/gorm"
@@ -25,8 +26,12 @@ func ProfileHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWri
 		return
 	}
 
+	var quotesCount int64
+	db.Model(&models.Quote{}).Where("user_id = ?", user.ID).Count(&quotesCount)
+
 	templates.Tmpl.ExecuteTemplate(w, "profile", map[string]string{
-		"Username": user.Username,
+		"Username":  user.Username,
+		"QuotCount": strconv.FormatInt(quotesCount, 10),
 	})
 
 }
