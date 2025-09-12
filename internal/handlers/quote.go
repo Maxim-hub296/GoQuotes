@@ -117,6 +117,61 @@ func ChangeFavoriteQuoteHandler(db *gorm.DB, store *sessions.CookieStore, w http
 	http.Redirect(w, r, "/quotes/", http.StatusSeeOther)
 }
 
+func QuoteEditHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
+	uid, ok := utils.IsLoggedIn(store, r)
+	if !ok {
+		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+		return
+	}
+
+	if r.Method == "GET" {
+		// Получаем ID цитаты из query параметра
+		quoteId := r.URL.Query().Get("quote_id")
+		id, err := strconv.Atoi(quoteId)
+		if err != nil {
+			http.Error(w, "Неверный ID цитаты", http.StatusBadRequest)
+			return
+		}
+
+		var quote models.Quote
+		result := db.Where("id = ? AND user_id = ?", id, uid).First(&quote)
+		if result.Error != nil {
+			http.Error(w, "Цитата не найдена", http.StatusNotFound)
+			return
+		}
+
+		templates.Tmpl.ExecuteTemplate(w, "quote_edit", quote)
+		return
+	}
+
+	if r.Method == "POST" {
+		// Получаем данные из формы
+		quoteId := r.FormValue("quote_id")
+		id, err := strconv.Atoi(quoteId)
+		if err != nil {
+			http.Error(w, "Неверный ID цитаты", http.StatusBadRequest)
+			return
+		}
+
+		author := r.FormValue("author")
+		text := r.FormValue("text")
+
+		// Обновляем запись
+		db.Model(&models.Quote{}).
+			Where("id = ? AND user_id = ?", id, uid).
+			Updates(map[string]interface{}{
+				"text":   text,
+				"author": author,
+			})
+
+		fmt.Println("Цитата успешно изменена")
+		http.Redirect(w, r, "/quotes/", http.StatusSeeOther)
+		return
+	}
+
+	http.Error(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+}
+
 func QuoteDeleteHandler(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	quoteId := r.FormValue("quote_id")
 

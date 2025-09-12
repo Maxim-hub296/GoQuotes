@@ -30,12 +30,20 @@
                     </footer>
 
                     <!-- Кнопки управления -->
-                    <div class="d-flex justify-content-between">
+                    <div class="btn-group" role="group">
                         <!-- Форма "Избранное" -->
-                        <form method="POST" action="/quotes/update-favorite" class="me-2">
+                        <form method="POST" action="/quotes/update-favorite">
                             <input type="hidden" name="quote_id" value="{{ .ID }}">
                             <button type="submit" class="btn btn-sm {{ if .Favorite }}btn-warning{{ else }}btn-outline-warning{{ end }}">
                                 {{ if .Favorite }}★{{ else }}☆{{ end }}
+                            </button>
+                        </form>
+
+                        <!-- Форма "Изменить" -->
+                        <form method="GET" action="/quotes/edit">
+                            <input type="hidden" name="quote_id" value="{{ .ID }}">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                ✏️
                             </button>
                         </form>
 
@@ -43,7 +51,7 @@
                         <form method="POST" action="/quotes/delete">
                             <input type="hidden" name="quote_id" value="{{ .ID }}">
                             <button type="submit" class="btn btn-sm btn-outline-danger">
-                                Удалить
+                                🗑️
                             </button>
                         </form>
                     </div>

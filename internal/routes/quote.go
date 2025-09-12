@@ -25,5 +25,8 @@ func QuoteRoutes(r *mux.Router, db *gorm.DB, store *sessions.CookieStore) {
 	r.HandleFunc("/update-favorite", func(w http.ResponseWriter, r *http.Request) {
 		handlers.ChangeFavoriteQuoteHandler(db, store, w, r)
 	})
+	r.HandleFunc("/edit", func(w http.ResponseWriter, r *http.Request) {
+		handlers.QuoteEditHandler(db, store, w, r)
+	})
 
 }
