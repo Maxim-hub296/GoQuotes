@@ -13,33 +13,41 @@
 
 <!-- Основной контент -->
 <main class="container my-5" style="min-height: 70vh;">
-    <h2 class="text-center mb-4">Ваши цитаты</h2>
+    <h2 class="text-center mb-4">{{ .Title }}</h2>
 
     {{ if .Quotes }}
     <div class="row row-cols-1 row-cols-md-2 g-4">
         {{ range .Quotes }}
         <div class="col">
             <div class="card shadow-sm h-100" style="border-radius: 12px;" data-quote-id="{{ .ID }}">
-                <div class="card-body">
-                    <!-- Форма для удаления -->
-                    <form method="POST" action="/quotes/delete" class="d-flex flex-column h-100">
-                        <!-- скрытый ID -->
-                        <input type="hidden" name="quote_id" value="{{ .ID }}">
+                <div class="card-body d-flex flex-column">
 
-                        <blockquote class="blockquote mb-3 flex-grow-1">
-                            <p class="mb-0">"{{ .Text }}"</p>
-                        </blockquote>
-                        <footer class="blockquote-footer mb-3">
-                            {{ .Author }}
-                        </footer>
+                    <blockquote class="blockquote mb-3 flex-grow-1">
+                        <p class="mb-0">"{{ .Text }}"</p>
+                    </blockquote>
+                    <footer class="blockquote-footer mb-3">
+                        {{ .Author }}
+                    </footer>
 
-                        <!-- Кнопка удаления -->
-                        <div class="text-end">
+                    <!-- Кнопки управления -->
+                    <div class="d-flex justify-content-between">
+                        <!-- Форма "Избранное" -->
+                        <form method="POST" action="/quotes/update-favorite" class="me-2">
+                            <input type="hidden" name="quote_id" value="{{ .ID }}">
+                            <button type="submit" class="btn btn-sm {{ if .Favorite }}btn-warning{{ else }}btn-outline-warning{{ end }}">
+                                {{ if .Favorite }}★{{ else }}☆{{ end }}
+                            </button>
+                        </form>
+
+                        <!-- Форма "Удалить" -->
+                        <form method="POST" action="/quotes/delete">
+                            <input type="hidden" name="quote_id" value="{{ .ID }}">
                             <button type="submit" class="btn btn-sm btn-outline-danger">
                                 Удалить
                             </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -47,7 +55,7 @@
     </div>
     {{ else }}
     <div class="alert alert-info text-center">
-        Вы еще не сохранили ни одной цитаты
+        {{ .Empty }}
     </div>
     {{ end }}
 </main>

@@ -13,6 +13,8 @@ import (
 )
 
 type Quotes struct {
+	Title  string
+	Empty  string
 	Quotes []models.Quote
 }
 
@@ -66,9 +68,53 @@ func UserQuotesHandler(db *gorm.DB, store *sessions.CookieStore, w http.Response
 	db.Where("user_id = ?", uid).Find(&quotes)
 
 	templates.Tmpl.ExecuteTemplate(w, "quotes", Quotes{
+		Title:  "Ваши цитаты",
+		Empty:  "Вы еще не сохранили ни одной цитаты",
 		Quotes: quotes,
 	})
 
+}
+
+func FavoriteQuoteHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
+	uid, ok := utils.IsLoggedIn(store, r)
+	if !ok {
+		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+		return
+	}
+
+	var quotes []models.Quote
+	db.Where("user_id = ? AND favorite = ?", uid, true).Find(&quotes)
+
+	templates.Tmpl.ExecuteTemplate(w, "quotes", Quotes{
+		Title:  "Ваши избранные цитаты",
+		Empty:  "Вы не добавили в избранное ни одной цитаты",
+		Quotes: quotes,
+	})
+
+}
+
+func ChangeFavoriteQuoteHandler(db *gorm.DB, store *sessions.CookieStore, w http.ResponseWriter, r *http.Request) {
+	uid, ok := utils.IsLoggedIn(store, r)
+
+	if !ok {
+		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+		return
+	}
+
+	quoteId := r.FormValue("quote_id")
+
+	id, err := strconv.Atoi(quoteId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	db.Model(&models.Quote{}).
+		Where("id = ? AND user_id = ?", id, uid).
+		Update("favorite", gorm.Expr("NOT favorite"))
+
+	fmt.Println("Цитата добавлена в избранное")
+	http.Redirect(w, r, "/quotes/", http.StatusSeeOther)
 }
 
 func QuoteDeleteHandler(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
